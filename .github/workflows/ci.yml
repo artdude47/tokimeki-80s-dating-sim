@@ -1,0 +1,21 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  quick-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure no huge files are committed
+        run: |
+          git ls-files -s | awk '{print $4}' | while read f; do
+            if [ -f "$f" ]; then
+              s=$(stat -c%s "$f")
+              if [ $s -gt 100000000 ]; then
+                echo "::error file=$f::File >100MB committed"; exit 1
+              fi
+            fi
+          done
