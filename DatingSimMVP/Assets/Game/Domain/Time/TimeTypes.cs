@@ -6,7 +6,7 @@ namespace Game.Domain.Time
 {
     public enum DOW { Mon = 1, Tue, Wed, Thu, Fri, Sat, Sun }
     public enum DayType { Weekday, Weekend, Holiday }
-    public enum Phase { Weekday, SaturdayMorning, SaturdayDay, SundayMorning, SundayDay }
+    public enum Phase { Weekday, SaturdayMorning, SaturdayDay, SundayMorning, SundayDay, HolidayMorning, HolidayDay }
 
     public sealed class GameDate
     {
