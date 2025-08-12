@@ -1,8 +1,73 @@
 {
-  "Study":    { "inc":[["Academics",2,4]], "dec":[["Athletics",0,1]], "stress":[1,2], "staminaCost":[1,2], "repeatDecay":0.9 },
-  "Exercise": { "inc":[["Athletics",2,4],["Guts",1,2]], "dec":[["Academics",0,1]], "stress":[0,1], "staminaCost":[2,4], "repeatDecay":0.9 },
-  "Art":      { "inc":[["Art",2,3]], "dec":[["Athletics",0,1]], "stress":[0,1], "staminaCost":[1,2], "repeatDecay":0.9 },
-  "Social":   { "inc":[["Charm",1,2],["GenKnowledge",0,1]], "dec":[], "stress":[-1,0], "staminaCost":[0,1], "repeatDecay":0.95 },
-  "Fashion":  { "inc":[["Charm",2,3]], "dec":[["Guts",0,1]], "stress":[0,1], "staminaCost":[1,2], "repeatDecay":0.9 },
-  "Rest":     { "inc":[["Stamina",3,6]], "dec":[["Stress",2,4]], "stress":[-3,-2], "staminaCost":[0,0], "repeatDecay":1.0 }
+  "Study": {
+    "inc": [
+      { "stat": "Academics", "min": 2, "max": 4 }
+    ],
+    "dec": [
+      { "stat": "Athletics", "min": 0, "max": 1 }
+    ],
+    "stress":      { "min": 1, "max": 2 },
+    "staminaCost": { "min": 1, "max": 2 },
+    "repeatDecay": 0.9
+  },
+
+  "Exercise": {
+    "inc": [
+      { "stat": "Athletics", "min": 2, "max": 4 },
+      { "stat": "Guts",      "min": 1, "max": 2 }
+    ],
+    "dec": [
+      { "stat": "Academics", "min": 0, "max": 1 }
+    ],
+    "stress":      { "min": 0, "max": 1 },
+    "staminaCost": { "min": 2, "max": 4 },
+    "repeatDecay": 0.9
+  },
+
+  "Art": {
+    "inc": [
+      { "stat": "Art",       "min": 2, "max": 3 }
+    ],
+    "dec": [
+      { "stat": "Athletics", "min": 0, "max": 1 }
+    ],
+    "stress":      { "min": 0, "max": 1 },
+    "staminaCost": { "min": 1, "max": 2 },
+    "repeatDecay": 0.9
+  },
+
+  "Social": {
+    "inc": [
+      { "stat": "Charm",        "min": 1, "max": 2 },
+      { "stat": "GenKnowledge", "min": 0, "max": 1 }
+    ],
+    "dec": [],
+    "stress":      { "min": -1, "max": 0 },
+    "staminaCost": { "min": 0,  "max": 1 },
+    "repeatDecay": 0.95
+  },
+
+  "Fashion": {
+    "inc": [
+      { "stat": "Charm", "min": 2, "max": 3 }
+    ],
+    "dec": [
+      { "stat": "Guts",  "min": 0, "max": 1 }
+    ],
+    "stress":      { "min": 0, "max": 1 },
+    "staminaCost": { "min": 1, "max": 2 },
+    "repeatDecay": 0.9
+  },
+
+  "Rest": {
+    "inc": [
+      { "stat": "Stamina", "min": 3, "max": 6 }
+    ],
+    "dec": [
+      { "stat": "Stress",  "min": 2, "max": 4 }
+    ],
+    "stress":      { "min": -3, "max": -2 },
+    "staminaCost": { "min": 0,  "max": 0 },
+    "repeatDecay": 1.0
+  }
 }
