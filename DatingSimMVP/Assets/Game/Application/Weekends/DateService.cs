@@ -1,60 +1,48 @@
-using Game.Domain.Common;
-using Game.Domain.Relationships;
-using Game.Domain.Time;
+using System;
+using Game.Domain.Common;        // DateOccurred, DateOutcome, IEvent, EventBus
+using Game.Domain.Relationships; // RelationshipState
+using Game.Domain.Time;          // GameDate, IBookingCalendar
 
 namespace Game.Application.Weekends
 {
-    public enum DateOutcome { Success, Awkward, NoShow }
-
-    public readonly struct DateOccurred : IEvent
+    public interface IDateService
     {
-        public readonly GameDate Date;
-        public readonly string NpcId;
-        public readonly string VenueId;
-        public readonly DateOutcome Outcome;
-        public readonly int AffectionDelta;
-        public DateOccurred(GameDate d, string npc, string venue, DateOutcome outcome, int delta)
+        /// <summary>
+        /// If a booking exists for <paramref name="today"/>, runs the date,
+        /// updates affection, and publishes DateOccurred & AffectionChanged.
+        /// Returns true if a date ran; false if no booking.
+        /// </summary>
+        bool TryRunTodayDate(GameDate today);
+    }
+
+    public sealed class DateService : IDateService
+    {
+        private readonly EventBus _bus;
+        private readonly RelationshipState _rels;
+        private readonly IBookingCalendar _bookings;
+
+        public DateService(EventBus bus, RelationshipState rels, IBookingCalendar bookings)
         {
-            Date = d;
-            NpcId = npc;
-            VenueId = venue;
-            Outcome = outcome;
-            AffectionDelta = delta;
+            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
+            _rels = rels ?? throw new ArgumentNullException(nameof(rels));
+            _bookings = bookings ?? throw new ArgumentNullException(nameof(bookings));
         }
 
-        public interface IDateService
+        public bool TryRunTodayDate(GameDate today)
         {
-            bool TryRunTodayDate(GameDate today);
-        }
+            if (!_bookings.TryGetBooking(today, out var b)) return false;
 
-        public sealed class DateService : IDateService
-        {
-            private readonly EventBus _bus;
-            private readonly RelationshipState _rels;
-            private readonly IBookingCalendar _bookings;
+            // Minimal scoring: base + small venue bonus; awkward if affection low
+            int baseDelta  = (_rels.GetAffection(b.npcId) >= 40) ? 3 : 1;
+            int venueBonus = 1; // TODO: per-NPC venue prefs
+            int delta = baseDelta + venueBonus;
 
-            public DateService(EventBus bus, RelationshipState rels, IBookingCalendar bookings)
-            {
-                _bus = bus;
-                _rels = rels;
-                _bookings = bookings;
-            }
+            var outcome = (_rels.GetAffection(b.npcId) >= 20) ? DateOutcome.Success : DateOutcome.Awkward;
+            var newAff  = _rels.AddAffection(b.npcId, delta);
 
-            public bool TryRunTodayDate(GameDate today)
-            {
-                if (!_bookings.TryGetBooking(today, out var b)) return false;
-
-                // Minimal scoring: base + small venue bonus; awkward if affection low
-                int baseDelta = (_rels.GetAffection(b.npcId) >= 40) ? 3 : 1;
-                int venueBonus = 1; //TODO: Implement per-npc venue prefs
-                int delta = baseDelta + venueBonus;
-
-                var outcome = (_rels.GetAffection(b.npcId) >= 20) ? DateOutcome.Success : DateOutcome.Awkward;
-                var newAff = _rels.AddAffection(b.npcId, delta);
-                _bus.Publish(new AffectionChanged(b.npcId, newAff));
-                _bus.Publish(new DateOccurred(today, b.npcId, b.venueId, outcome, delta));
-                return true;
-            }
+            _bus.Publish(new AffectionChanged(b.npcId, newAff));
+            _bus.Publish(new DateOccurred(today, b.npcId, b.venueId, outcome, delta));
+            return true;
         }
     }
 }
