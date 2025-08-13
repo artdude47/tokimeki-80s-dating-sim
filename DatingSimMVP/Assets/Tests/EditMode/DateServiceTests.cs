@@ -4,7 +4,6 @@ using Game.Domain.Relationships;
 using Game.Domain.Time;
 using Game.Application.Weekends;
 using static Game.Domain.Time.IBookingCalendar;
-using static Game.Application.Weekends.DateOccurred;
 
 public class DateServiceTests
 {
