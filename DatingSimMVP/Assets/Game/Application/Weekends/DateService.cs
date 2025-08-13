@@ -1,20 +1,19 @@
 using Game.Domain.Common;
 using Game.Domain.Relationships;
 using Game.Domain.Time;
-using UnityEditor;
 
 namespace Game.Application.Weekends
 {
     public enum DateOutcome { Success, Awkward, NoShow }
 
-    public readonly struct DateOccured : IEvent
+    public readonly struct DateOccurred : IEvent
     {
         public readonly GameDate Date;
         public readonly string NpcId;
         public readonly string VenueId;
         public readonly DateOutcome Outcome;
         public readonly int AffectionDelta;
-        public DateOccured(GameDate d, string npc, string venue, DateOutcome outcome, int delta)
+        public DateOccurred(GameDate d, string npc, string venue, DateOutcome outcome, int delta)
         {
             Date = d;
             NpcId = npc;
@@ -53,7 +52,7 @@ namespace Game.Application.Weekends
                 var outcome = (_rels.GetAffection(b.npcId) >= 20) ? DateOutcome.Success : DateOutcome.Awkward;
                 var newAff = _rels.AddAffection(b.npcId, delta);
                 _bus.Publish(new AffectionChanged(b.npcId, newAff));
-                _bus.Publish(new DateOccured(today, b.npcId, b.venueId, outcome, delta));
+                _bus.Publish(new DateOccurred(today, b.npcId, b.venueId, outcome, delta));
                 return true;
             }
         }
