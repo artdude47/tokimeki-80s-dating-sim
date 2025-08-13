@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using Game.Domain.Save;
 
-namespace Game.Infrustructure.Save
+namespace Game.Infrastructure.Save
 {
     public interface ISaveService
     {
