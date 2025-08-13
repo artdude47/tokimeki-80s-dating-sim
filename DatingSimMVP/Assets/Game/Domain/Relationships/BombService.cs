@@ -34,20 +34,22 @@ namespace Game.Domain.Relationships
 
         public bool IsArmed(string npcId) => _armed.Contains(npcId);
 
-        public void OnWeekEneded(WeekEnded e)
+        public void OnWeekEnded(WeekEnded e)
         {
-            foreach (var key in _weeksSinceLastDate.Keys)
+            //1 increment counters without mutating 
+            var keys = new List<string>(_weeksSinceLastDate.Keys);
+            foreach (var key in keys)
             {
                 _weeksSinceLastDate[key] = _weeksSinceLastDate[key] + 1;
             }
 
-            // arm any that cross threshhold
-            foreach (var kv in new List<string>(_weeksSinceLastDate.Keys))
+            //2 Arm any that cross the threshold
+            foreach (var id in new List<string>(_weeksSinceLastDate.Keys))
             {
-                if (_weeksSinceLastDate[kv] >= _cfg.WeeksToArm && !_armed.Contains(kv))
+                if (_weeksSinceLastDate[id] >= _cfg.WeeksToArm && !_armed.Contains(id))
                 {
-                    _armed.Add(kv);
-                    _bus.Publish(new BombArmed(kv));
+                    _armed.Add(id);
+                    _bus.Publish(new BombArmed(id));
                 }
             }
         }
