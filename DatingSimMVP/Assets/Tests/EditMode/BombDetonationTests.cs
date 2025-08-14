@@ -2,6 +2,8 @@ using NUnit.Framework;
 using Game.Domain.Common;
 using Game.Domain.Relationships;
 using Game.Domain.Time;
+using System.Collections.Generic;
+using System;
 
 public class BombDetonationTests
 {
@@ -14,7 +16,7 @@ public class BombDetonationTests
         rels.SetInitial("npc_jen", 20);
         rels.SetInitial("npc_max", 30);
 
-        var cfg   = new BombConfig { WeeksToArm = 1, FuseWeeks = 1, GlobalPenalty = 4 };
+        var cfg   = new BombConfig { WeeksToArm = 2, FuseWeeks = 1, GlobalPenalty = 4 };
         var bombs = new BombService(bus, cfg, rels);
 
         // IMPORTANT: track EVERY NPC that should participate
@@ -22,7 +24,19 @@ public class BombDetonationTests
         bombs.EnsureTracked("npc_jen");
         bombs.EnsureTracked("npc_max");
 
-        // DO NOT subscribe OnWeekEnded here (service already auto-subscribes)
+        //Seed neglet to arm only ash
+        bombs.Restore(
+            new Dictionary<string, int>
+            {
+                ["npc_ash"] = 1,
+                ["npc_jen"] = 0,
+                ["npc_max"] = 0,
+            },
+            Array.Empty<string>(),
+            new Dictionary<string, int>()
+        );
+
+        bus.Subscribe<WeekEnded>(e => bombs.OnWeekEnded(e));
 
         bool detonated = false;
         bus.Subscribe<BombDetonated>(_ => detonated = true);
