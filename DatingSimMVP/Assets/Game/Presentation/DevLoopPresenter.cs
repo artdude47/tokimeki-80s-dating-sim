@@ -135,7 +135,7 @@ public class DevLoopPresenter : MonoBehaviour
         _booking = new BookingCalendar(cal);
         _phone = new PhoneService(_bus, _rels, _booking);
         _dates = new DateService(_bus, _rels, _booking);
-        _bombs = new BombService(_bus, new BombConfig { WeeksToArm = 8, FuseWeeks = 3 });
+        _bombs = new BombService(_bus, new BombConfig { WeeksToArm = 8, FuseWeeks = 3 }, _rels);
         _bombs.EnsureTracked(Game.Domain.Relationships.Npcs.Ash.Id);
         _bombs.EnsureTracked(Game.Domain.Relationships.Npcs.Jen.Id);
         _bombs.EnsureTracked(Game.Domain.Relationships.Npcs.Max.Id);

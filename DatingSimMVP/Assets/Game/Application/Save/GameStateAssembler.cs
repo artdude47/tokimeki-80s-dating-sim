@@ -39,7 +39,7 @@ namespace Game.Application.Save
             };
 
             //bombs
-            var (counters, armed) = bombs.Snapshot();
+            var (counters, armed, fuse) = bombs.Snapshot();
             s.BombCounters = new Dictionary<string, int>(counters);
             s.BombArmed = new List<string>(armed);
 
