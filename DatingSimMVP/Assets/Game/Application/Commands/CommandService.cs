@@ -39,6 +39,8 @@ namespace Game.Application.Commands
         private int _sameCommandStreak = 0;
 
         public string CurrentCommandId => _currentCommand;
+        public string LastWeekCommandId => _lastWeekCommand;
+        public int SameCommandStreak => _sameCommandStreak;
 
         public CommandService(EventBus bus, StatBlock stats, IRandomizer rng = null)
         {
@@ -66,6 +68,13 @@ namespace Game.Application.Commands
                 _sameCommandStreak = 0;
 
             _lastWeekCommand = _currentCommand;
+        }
+
+        public void RestoreState(string currentCommandId, string lastWeekCommandId, int sameCommandStreak)
+        {
+            _currentCommand = currentCommandId;
+            _lastWeekCommand = lastWeekCommandId;
+            _sameCommandStreak = sameCommandStreak < 0 ? 0 : sameCommandStreak;
         }
 
         public void OnPhaseStarted(PhaseStarted e)
