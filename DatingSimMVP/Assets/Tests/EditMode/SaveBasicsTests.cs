@@ -29,7 +29,7 @@ public class SaveBasicsTests
         var booking = new BookingCalendar(cal);
         booking.BookDate("npc_jen", new GameDate(1,5,DOW.Sun), "diner");
 
-        var bombs = new BombService(bus, new BombConfig{ WeeksToArm=8, FuseWeeks=3 });
+        var bombs = new BombService(bus, new BombConfig{ WeeksToArm=8, FuseWeeks=3 }, rels);
         bombs.EnsureTracked("npc_jen");
 
         var snapshot = GameStateAssembler.BuildSnapshot(time, time.CurrentPhase, stats,

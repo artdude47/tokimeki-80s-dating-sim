@@ -11,7 +11,8 @@ public class BombServiceTests
     {
         var bus = new EventBus();
         var cfg = new BombConfig{ WeeksToArm = 3, FuseWeeks = 2 };
-        var bombs = new BombService(bus, cfg);
+        var rels = new RelationshipState();
+        var bombs = new BombService(bus, cfg, rels);
 
         bombs.EnsureTracked("npc_ash");
         // simulate weeks passing

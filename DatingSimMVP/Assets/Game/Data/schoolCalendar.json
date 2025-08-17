@@ -1,5 +1,11 @@
 {
   "years": [
-    { "year": 1, "weeks": 42, "holidays": [] }
+    { 
+      "year": 1, 
+      "weeks": 42, 
+      "holidays": [
+        "5-2",
+        "12-5"
+      ] }
   ]
 }

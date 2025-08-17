@@ -42,6 +42,17 @@ namespace Game.Domain.Time
             _bus.Publish(new PhaseStarted(Current, Phase.Weekday));
         }
 
+        public void RestoreTo(int year, int week, DOW day, Phase phase, bool emitEvents = true)
+        {
+            Current.Set(year, week, day);
+            CurrentPhase = phase;
+            if (emitEvents)
+            {
+                _bus.Publish(new WeekStarted(Current.Year, Current.Week));
+                _bus.Publish(new PhaseStarted(Current, CurrentPhase));
+            }
+        }
+
         public void AdvancePhase()
         {
             // End the current phase
@@ -90,8 +101,8 @@ namespace Game.Domain.Time
                     return;
                 }
             }
-            
-             // Weekend & Holiday phase flow
+
+            // Weekend & Holiday phase flow
             switch (CurrentPhase)
             {
                 case Phase.HolidayMorning:
@@ -100,29 +111,29 @@ namespace Game.Domain.Time
                     return;
 
                 case Phase.HolidayDay:
-                {
-                    // After a holiday day, move to the next calendar day.
-                    var nextDay = (Current.Day == DOW.Fri) ? DOW.Sat : Current.Day + 1;
-                    Current.Set(Current.Year, Current.Week, nextDay);
+                    {
+                        // After a holiday day, move to the next calendar day.
+                        var nextDay = (Current.Day == DOW.Fri) ? DOW.Sat : Current.Day + 1;
+                        Current.Set(Current.Year, Current.Week, nextDay);
 
-                    // Decide the phase for the NEXT day properly (Holiday > Weekend > Weekday)
-                    var t = _cal.GetDayType(Current.Year, Current.Week, Current.Day);
-                    if (t == DayType.Holiday)
-                    {
-                        CurrentPhase = Phase.HolidayMorning;
-                    }
-                    else if (t == DayType.Weekend)
-                    {
-                        CurrentPhase = (Current.Day == DOW.Sat) ? Phase.SaturdayMorning : Phase.SundayMorning;
-                    }
-                    else
-                    {
-                        CurrentPhase = Phase.Weekday;
-                    }
+                        // Decide the phase for the NEXT day properly (Holiday > Weekend > Weekday)
+                        var t = _cal.GetDayType(Current.Year, Current.Week, Current.Day);
+                        if (t == DayType.Holiday)
+                        {
+                            CurrentPhase = Phase.HolidayMorning;
+                        }
+                        else if (t == DayType.Weekend)
+                        {
+                            CurrentPhase = (Current.Day == DOW.Sat) ? Phase.SaturdayMorning : Phase.SundayMorning;
+                        }
+                        else
+                        {
+                            CurrentPhase = Phase.Weekday;
+                        }
 
-                    _bus.Publish(new PhaseStarted(Current, CurrentPhase));
-                    return;
-                }
+                        _bus.Publish(new PhaseStarted(Current, CurrentPhase));
+                        return;
+                    }
 
                 case Phase.SaturdayMorning:
                     CurrentPhase = Phase.SaturdayDay;
@@ -158,9 +169,9 @@ namespace Game.Domain.Time
                     _bus.Publish(new WeekStarted(Current.Year, Current.Week));
                     _bus.Publish(new PhaseStarted(Current, CurrentPhase));
                     return;
-            }   
+            }
 
-        throw new InvalidOperationException($"Unhandled phase {CurrentPhase}");
+            throw new InvalidOperationException($"Unhandled phase {CurrentPhase}");
         }
     }
 }
