@@ -30,6 +30,21 @@ namespace Game.Application.Weekends
                 _rng01to100 = (min, max) => new Random().Next(min, max + 1);
         }
 
+        public (int chance, string reason) PreviewAcceptance(string npcId, GameDate target)
+        {
+            if (!_bookings.IsBookable(target)) return (0, "Not a weekend/holiday");
+            if (!_bookings.IsFreeForDate(npcId, target)) return (0, "Already booked");
+
+            var aff = _rels.GetAffection(npcId);
+            int baseChance =
+                aff >= 60 ? 90 :
+                aff >= 40 ? 70 :
+                aff >= 20 ? 50 : 30;
+
+            string reason = $"Affection {aff} ⇒ base {baseChance}%";
+            return (baseChance, reason);
+        }
+
         public DateResponse ProposeDate(string npcId, GameDate target, string venueId)
         {
             if (!_bookings.IsBookable(target)) return DateResponse.Reject;
