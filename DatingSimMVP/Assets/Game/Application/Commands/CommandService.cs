@@ -56,7 +56,7 @@ namespace Game.Application.Commands
         public void SelectWeekdayCommand(string id)
         {
             if (_catalog == null || !_catalog.ContainsKey(id))
-                throw new ArgumentException("$Unknown command id '{id}'");
+                throw new ArgumentException($"Unknown command id '{id}'");
             _currentCommand = id;
         }
 
